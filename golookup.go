@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -18,11 +19,25 @@ func init() {
 }
 
 func main() {
-	lookupUrl := makeDictionaryUrl("purple")
+	// how to lookup this way: [run the file command] -word WORD -src SOURCE (t or d); does a lookup on the word, dictionary by default, thesaurus if -src is t
+	word := flag.String("word", "", "The word you want to look up")
+	resource := flag.String("src", "d", "What resource you want to use, 'd' for dictionary, 't' for thesaurus.")
+	flag.Parse()
+
+	var lookupUrl string
+	if *resource == "d" {
+		lookupUrl = makeDictionaryUrl(*word)
+	}
+	if *resource == "t" {
+		lookupUrl = makeThesaurusUrl(*word)
+	}
+
 	res, err := http.Get(lookupUrl)
 	printErrorAndExit(err)
+
 	resBody, bodyErr := ioutil.ReadAll(res.Body)
 	printErrorAndExit(bodyErr)
+
 	fmt.Printf("%s", resBody)
 }
 
