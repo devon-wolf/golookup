@@ -25,11 +25,11 @@ func main() {
 	flag.Parse()
 
 	var lookupUrl string
-	if *resource == "d" {
-		lookupUrl = makeDictionaryUrl(*word)
-	}
+	// check the dictionary unless '-src t' is specified
 	if *resource == "t" {
 		lookupUrl = makeThesaurusUrl(*word)
+	} else {
+		lookupUrl = makeDictionaryUrl(*word)
 	}
 
 	res, err := http.Get(lookupUrl)
